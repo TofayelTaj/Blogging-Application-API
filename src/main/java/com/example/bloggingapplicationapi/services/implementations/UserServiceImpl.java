@@ -5,15 +5,18 @@ import com.example.bloggingapplicationapi.exceptions.ResourceNotFound;
 import com.example.bloggingapplicationapi.payloads.UserDto;
 import com.example.bloggingapplicationapi.repositories.UserRepository;
 import com.example.bloggingapplicationapi.services.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private ModelMapper modelMapper;
     @Override
     public UserDto createUser(UserDto userDto) {
         User savedUser = userRepository.save(this.dtoToUser(userDto));
@@ -33,10 +36,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findUserById(Long userId) {
-        User user = userRepository.findById(userId).get();
-        if (user == null) {
-            throw new ResourceNotFound(String.format("%l Id Not Found !", userId));
-        }
+        User user;
+        user = userRepository.findById(userId).orElseThrow(() ->new ResourceNotFound(String.format("Id : %s Not Found !", userId)));
         return this.userToDto(user);
     }
 
@@ -58,22 +59,12 @@ public class UserServiceImpl implements UserService {
 
 
     public User dtoToUser(UserDto userDto) {
-        User user = new User();
-        user.setId(userDto.getId());
-        user.setName(userDto.getName());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
-        user.setAbout(userDto.getAbout());
+        User user = modelMapper.map(userDto, User.class);
         return user;
     }
 
     public UserDto userToDto(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setName(user.getName());
-        userDto.setEmail(user.getEmail());
-        userDto.setPassword(user.getPassword());
-        userDto.setAbout(user.getAbout());
+        UserDto userDto = modelMapper.map(user, UserDto.class);
         return userDto;
     }
 
