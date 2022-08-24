@@ -3,15 +3,15 @@ package com.example.bloggingapplicationapi.services.implementations;
 import com.example.bloggingapplicationapi.entities.Category;
 import com.example.bloggingapplicationapi.entities.Post;
 import com.example.bloggingapplicationapi.entities.User;
+import com.example.bloggingapplicationapi.exceptions.ResourceNotFound;
 import com.example.bloggingapplicationapi.payloads.PostDto;
 import com.example.bloggingapplicationapi.repositories.PostRepository;
 import com.example.bloggingapplicationapi.services.IPostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 @Service
 public class PostServiceImpl implements IPostService {
@@ -42,21 +42,37 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public PostDto updatePost(PostDto postDto, Long postId) {
-        return null;
+        Post oldPost = postRepository.findById(postId).orElseThrow(()->new ResourceNotFound("Post Not Found!"));
+        oldPost.setTitle(postDto.getTitle());
+        oldPost.setContent(postDto.getContent());
+        oldPost.setImageName(postDto.getImageName());
+        Post post = postRepository.save(oldPost);
+        return modelMapper.map(post, PostDto.class);
     }
 
     @Override
     public List<PostDto> getPostByUserId(Long userId) {
-        return null;
+        List<Post> posts = postRepository.findPostsByUserId(userId);
+        List<PostDto> postDtos = new ArrayList<>();
+        for(Post post : posts){
+            postDtos.add(modelMapper.map(post, PostDto.class));
+        }
+        return postDtos;
     }
 
     @Override
     public void deletePostByPostId(Long postId) {
-
+        Post post = postRepository.findById(postId).orElseThrow(()-> new ResourceNotFound("Post Not Found ! "));
+        postRepository.delete(post);
     }
 
     @Override
     public List<PostDto> getPostsByCategoryId(Long categoryId) {
-        return null;
+        List<Post> posts = postRepository.findPostsByCategoryId(categoryId);
+        List<PostDto> postDtos = new ArrayList<>();
+        for(Post post : posts){
+            postDtos.add(modelMapper.map(post, PostDto.class));
+        }
+        return postDtos;
     }
 }
