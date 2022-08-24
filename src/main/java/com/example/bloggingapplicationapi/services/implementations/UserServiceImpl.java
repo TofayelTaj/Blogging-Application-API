@@ -4,19 +4,21 @@ import com.example.bloggingapplicationapi.entities.User;
 import com.example.bloggingapplicationapi.exceptions.ResourceNotFound;
 import com.example.bloggingapplicationapi.payloads.UserDto;
 import com.example.bloggingapplicationapi.repositories.UserRepository;
-import com.example.bloggingapplicationapi.services.UserService;
+import com.example.bloggingapplicationapi.services.IUserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements IUserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private ModelMapper modelMapper;
+
     @Override
     public UserDto createUser(UserDto userDto) {
         User savedUser = userRepository.save(this.dtoToUser(userDto));
@@ -27,17 +29,25 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto, Long userId) {
 
         UserDto oldUser = this.findUserById(userId);
-        oldUser.setAbout(userDto.getAbout());
-        oldUser.setName(userDto.getName());
-        oldUser.setEmail(userDto.getEmail());
-        oldUser.setPassword(userDto.getPassword());
+        if (userDto.getName() != null) {
+            oldUser.setName(userDto.getName());
+        }
+        if (userDto.getPassword() != null) {
+            oldUser.setPassword(userDto.getPassword());
+        }
+        if (userDto.getEmail() != null) {
+            oldUser.setEmail(userDto.getEmail());
+        }
+        if (userDto.getAbout() != null) {
+            oldUser.setAbout(userDto.getAbout());
+        }
         return this.userToDto(userRepository.save(this.dtoToUser(oldUser)));
     }
 
     @Override
     public UserDto findUserById(Long userId) {
         User user;
-        user = userRepository.findById(userId).orElseThrow(() ->new ResourceNotFound(String.format("Id : %s Not Found !", userId)));
+        user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFound(String.format("Id : %s Not Found !", userId)));
         return this.userToDto(user);
     }
 

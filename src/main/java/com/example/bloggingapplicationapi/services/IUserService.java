@@ -4,7 +4,7 @@ import com.example.bloggingapplicationapi.payloads.UserDto;
 
 import java.util.List;
 
-public interface UserService {
+public interface IUserService {
 
     UserDto createUser(UserDto userDto);
     UserDto updateUser(UserDto userDto, Long userId);
