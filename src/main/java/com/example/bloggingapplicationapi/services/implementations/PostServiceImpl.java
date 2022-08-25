@@ -21,8 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -128,5 +127,12 @@ public class PostServiceImpl implements IPostService, ISearchService<PostDto>, I
             file.mkdirs();
         }
         Files.copy(image.getInputStream(), Paths.get(filePath));
+    }
+
+    @Override
+    public InputStream serveImage(String path, String imageName) throws FileNotFoundException {
+        String fullPath = path + File.separator + imageName;
+        InputStream is = new FileInputStream(fullPath);
+        return is;
     }
 }

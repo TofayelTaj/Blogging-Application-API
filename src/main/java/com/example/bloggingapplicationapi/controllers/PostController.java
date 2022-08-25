@@ -7,12 +7,17 @@ import com.example.bloggingapplicationapi.services.implementations.PostServiceIm
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -85,4 +90,15 @@ public class PostController {
         return new ResponseEntity(HttpStatus.OK);
 
     }
+
+
+    @GetMapping(value = "/image/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public void serveImage(@PathVariable String imageName,
+                           HttpServletResponse response
+                           ) throws IOException {
+
+        InputStream inputStream = postService.serveImage(path, imageName);
+        StreamUtils.copy(inputStream, response.getOutputStream());
+    }
+
 }
