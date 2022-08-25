@@ -9,6 +9,9 @@ import com.example.bloggingapplicationapi.repositories.PostRepository;
 import com.example.bloggingapplicationapi.services.IPostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -51,8 +54,11 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public List<PostDto> getPostByUserId(Long userId) {
-        List<Post> posts = postRepository.findPostsByUserId(userId);
+    public List<PostDto> getPostByUserId(Long userId, int page, int size) {
+
+        Pageable p = PageRequest.of(page, size);
+        Page<Post> pagePosts = postRepository.findPostsByUserId(userId, p);
+        List<Post> posts = pagePosts.getContent();
         List<PostDto> postDtos = new ArrayList<>();
         for(Post post : posts){
             postDtos.add(modelMapper.map(post, PostDto.class));
