@@ -8,6 +8,7 @@ import com.example.bloggingapplicationapi.payloads.PageResponse;
 import com.example.bloggingapplicationapi.payloads.PostDto;
 import com.example.bloggingapplicationapi.repositories.PostRepository;
 import com.example.bloggingapplicationapi.services.IPostService;
+import com.example.bloggingapplicationapi.services.ISearchService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 @Service
-public class PostServiceImpl implements IPostService {
+public class PostServiceImpl implements IPostService, ISearchService<PostDto> {
 
     @Autowired
     private UserServiceImpl userService;
@@ -84,6 +85,16 @@ public class PostServiceImpl implements IPostService {
     @Override
     public List<PostDto> getPostsByCategoryId(Long categoryId) {
         List<Post> posts = postRepository.findPostsByCategoryId(categoryId);
+        List<PostDto> postDtos = new ArrayList<>();
+        for(Post post : posts){
+            postDtos.add(modelMapper.map(post, PostDto.class));
+        }
+        return postDtos;
+    }
+
+    @Override
+    public List<PostDto> searchByTitle(String searchText) {
+        List<Post>  posts = postRepository.findPostsByTitleContaining(searchText);
         List<PostDto> postDtos = new ArrayList<>();
         for(Post post : posts){
             postDtos.add(modelMapper.map(post, PostDto.class));
