@@ -30,9 +30,11 @@ public class PostController {
     public ResponseEntity<PageResponse<PostDto>> getPostsByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0", required = false) int page,
-            @RequestParam(defaultValue = "10", required = false) int size
+            @RequestParam(defaultValue = "10", required = false) int size,
+            @RequestParam(defaultValue = "asc", required = false) String sortDir,
+            @RequestParam(defaultValue = "id", required = false) String sortBy
             ){
-        PageResponse<PostDto> pageResponse = postService.getPostByUserId(userId, page, size);
+        PageResponse<PostDto> pageResponse = postService.getPostByUserId(userId, page, size, sortBy, sortDir);
         return new ResponseEntity<>(pageResponse, HttpStatus.OK);
     }
 

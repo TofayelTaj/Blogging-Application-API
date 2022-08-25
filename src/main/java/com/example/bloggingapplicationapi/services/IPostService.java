@@ -9,7 +9,7 @@ public interface IPostService {
 
     PostDto createPost(PostDto postDto, Long userId, Long CategoryId);
     PostDto updatePost(PostDto postDto, Long postId);
-    PageResponse<PostDto> getPostByUserId(Long userId, int page, int size);
+    PageResponse<PostDto> getPostByUserId(Long userId, int page, int size, String sortBy, String sortDir);
     void deletePostByPostId(Long postId);
     List<PostDto> getPostsByCategoryId(Long categoryId);
 

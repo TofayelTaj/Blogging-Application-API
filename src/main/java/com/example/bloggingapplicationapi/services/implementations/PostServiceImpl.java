@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -55,9 +56,10 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public PageResponse<PostDto> getPostByUserId(Long userId, int page, int size) {
+    public PageResponse<PostDto> getPostByUserId(Long userId, int page, int size,String sortBy, String sortDir) {
 
-        Pageable p = PageRequest.of(page, size);
+        Sort sort = (sortDir.equalsIgnoreCase("asc")) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable p = PageRequest.of(page, size, sort);
         PageResponse<PostDto> pageResponse = new PageResponse<>();
         Page<Post> pagePosts = postRepository.findPostsByUserId(userId, p);
         List<Post> posts = pagePosts.getContent();
