@@ -9,18 +9,27 @@ import com.example.bloggingapplicationapi.payloads.PostDto;
 import com.example.bloggingapplicationapi.repositories.PostRepository;
 import com.example.bloggingapplicationapi.services.IPostService;
 import com.example.bloggingapplicationapi.services.ISearchService;
+import com.example.bloggingapplicationapi.services.ImageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 @Service
-public class PostServiceImpl implements IPostService, ISearchService<PostDto> {
+public class PostServiceImpl implements IPostService, ISearchService<PostDto>, ImageService {
 
     @Autowired
     private UserServiceImpl userService;
@@ -100,5 +109,24 @@ public class PostServiceImpl implements IPostService, ISearchService<PostDto> {
             postDtos.add(modelMapper.map(post, PostDto.class));
         }
         return postDtos;
+    }
+
+
+    public ResponseEntity<PostDto> getSinglePostByUserIdAndPostId(Long userId, Long postId){
+        Post post = postRepository.findPostByUserIdAndPostId(userId, postId);
+        PostDto postDto = modelMapper.map(post, PostDto.class);
+        return new ResponseEntity<>(postDto, HttpStatus.OK);
+    }
+
+
+    @Override
+    public void uploadImage(String path, MultipartFile image) throws IOException, FileAlreadyExistsException {
+        String fileName = image.getOriginalFilename();
+        String filePath = path + File.separator + fileName;
+        File file = new File(path);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        Files.copy(image.getInputStream(), Paths.get(filePath));
     }
 }

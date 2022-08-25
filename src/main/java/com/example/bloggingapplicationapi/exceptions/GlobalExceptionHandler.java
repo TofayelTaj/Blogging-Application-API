@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,4 +36,11 @@ public class GlobalExceptionHandler {
         }
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(FileAlreadyExistsException.class)
+    public ResponseEntity fileAlreadyExistException(){
+        return new ResponseEntity("file already exist", HttpStatus.ALREADY_REPORTED);
+    }
+
+
 }
