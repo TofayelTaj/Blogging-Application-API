@@ -1,5 +1,6 @@
 package com.example.bloggingapplicationapi.controllers;
 
+import com.example.bloggingapplicationapi.payloads.PageResponse;
 import com.example.bloggingapplicationapi.payloads.PostDto;
 import com.example.bloggingapplicationapi.services.implementations.PostServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,13 @@ public class PostController {
     }
 
     @GetMapping("/user/{userId}/post")
-    public ResponseEntity<List<PostDto>> getPostsByUserId(
+    public ResponseEntity<PageResponse<PostDto>> getPostsByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0", required = false) int page,
             @RequestParam(defaultValue = "10", required = false) int size
             ){
-        List<PostDto> postDtos = postService.getPostByUserId(userId, page, size);
-        return new ResponseEntity<>(postDtos, HttpStatus.OK);
+        PageResponse<PostDto> pageResponse = postService.getPostByUserId(userId, page, size);
+        return new ResponseEntity<>(pageResponse, HttpStatus.OK);
     }
 
     @GetMapping("/category/{categoryId}/post")

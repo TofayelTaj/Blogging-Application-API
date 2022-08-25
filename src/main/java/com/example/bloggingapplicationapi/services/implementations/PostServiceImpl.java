@@ -4,6 +4,7 @@ import com.example.bloggingapplicationapi.entities.Category;
 import com.example.bloggingapplicationapi.entities.Post;
 import com.example.bloggingapplicationapi.entities.User;
 import com.example.bloggingapplicationapi.exceptions.ResourceNotFound;
+import com.example.bloggingapplicationapi.payloads.PageResponse;
 import com.example.bloggingapplicationapi.payloads.PostDto;
 import com.example.bloggingapplicationapi.repositories.PostRepository;
 import com.example.bloggingapplicationapi.services.IPostService;
@@ -54,16 +55,22 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public List<PostDto> getPostByUserId(Long userId, int page, int size) {
+    public PageResponse<PostDto> getPostByUserId(Long userId, int page, int size) {
 
         Pageable p = PageRequest.of(page, size);
+        PageResponse<PostDto> pageResponse = new PageResponse<>();
         Page<Post> pagePosts = postRepository.findPostsByUserId(userId, p);
         List<Post> posts = pagePosts.getContent();
         List<PostDto> postDtos = new ArrayList<>();
         for(Post post : posts){
             postDtos.add(modelMapper.map(post, PostDto.class));
         }
-        return postDtos;
+        pageResponse.setContent(postDtos);
+        pageResponse.setPageNumber(pagePosts.getNumber());
+        pageResponse.setTotalPage(pagePosts.getTotalPages());
+        pageResponse.setTotalElements(pagePosts.getTotalElements());
+        pageResponse.setLastPage(pagePosts.isLast());
+        return pageResponse;
     }
 
     @Override
