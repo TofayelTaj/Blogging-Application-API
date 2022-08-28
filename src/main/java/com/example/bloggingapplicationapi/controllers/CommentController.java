@@ -1,8 +1,7 @@
-package com.example.bloggingapplicationapi.configurations;
+package com.example.bloggingapplicationapi.controllers;
 
 import com.example.bloggingapplicationapi.payloads.CommentDto;
 import com.example.bloggingapplicationapi.services.implementations.CommentServiceImpl;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

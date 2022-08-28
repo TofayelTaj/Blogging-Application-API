@@ -5,6 +5,7 @@ import com.example.bloggingapplicationapi.services.implementations.UserServiceIm
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,32 +17,35 @@ public class UserController {
 
     @Autowired
     private UserServiceImpl userService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/")
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto){
-       return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> findUserById(@PathVariable Long userId){
+    public ResponseEntity<UserDto> findUserById(@PathVariable Long userId) {
         return new ResponseEntity<>(userService.findUserById(userId), HttpStatus.FOUND);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<UserDto>> getAllUsers(){
+    public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> userDtoList = userService.getAllUser();
         return new ResponseEntity<>(userDtoList, HttpStatus.OK);
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity deleteUserById(@PathVariable("userId") Long userId){
-            userService.deleteUser(userId);
+    public ResponseEntity deleteUserById(@PathVariable("userId") Long userId) {
+        userService.deleteUser(userId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable long userId){
-       return new ResponseEntity<>(userService.updateUser(userDto, userId), HttpStatus.OK);
+    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable long userId) {
+        return new ResponseEntity<>(userService.updateUser(userDto, userId), HttpStatus.OK);
     }
 
 }
