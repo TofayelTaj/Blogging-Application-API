@@ -1,6 +1,5 @@
 package com.example.bloggingapplicationapi.controllers;
 
-import com.example.bloggingapplicationapi.entities.Post;
 import com.example.bloggingapplicationapi.payloads.PageResponse;
 import com.example.bloggingapplicationapi.payloads.PostDto;
 import com.example.bloggingapplicationapi.services.implementations.PostServiceImpl;
@@ -14,12 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 @RestController

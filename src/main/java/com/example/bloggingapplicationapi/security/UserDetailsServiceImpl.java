@@ -18,7 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(user == null){
             throw new UsernameNotFoundException("user not found !");
         }
-        UserDetails appUserDetails = new AppUserDetails(user);
+        AppUserDetails appUserDetails = new AppUserDetails(user);
         return appUserDetails;
     }
 }
